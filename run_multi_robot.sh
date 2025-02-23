@@ -27,7 +27,7 @@ RVO_exec="./joystick/RVO2/RVO2"
 SF_exec="./joystick/social_force/social_force"
 
 # can manually add/remove from this list
-algos=("Sampling" "RVO" "RVOwCkpt" "social_forces" "Sacadrl" "SacadrlwCkpt")
+algos=("Sampling" "brne" "cvm")
 for algo in ${algos[*]}; do
 
     # first off, start the socnavbench simulator 
