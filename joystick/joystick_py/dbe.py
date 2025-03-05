@@ -114,7 +114,7 @@ def get_index_table(num_agents):
     return index_table
 
 
-def brne_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
+def dbe_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
     index_table = get_index_table(num_agents).astype(int)
     all_pt_index = np.arange(num_agents * num_pts).reshape(num_agents, num_pts)
 

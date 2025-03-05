@@ -13,10 +13,10 @@ from socnav.socnav_renderer import SocNavRenderer
 from trajectory.trajectory import SystemConfig, Trajectory
 from utils.utils import euclidean_dist2
 
-from . import brne
+from . import dbe
 
 
-class JoystickBRNE(JoystickBase):
+class JoystickDBE(JoystickBase):
     def __init__(self):
         # planner variables
         # the list of commands sent to the robot to execute
@@ -26,7 +26,7 @@ class JoystickBRNE(JoystickBase):
         self.robot_current: np.ndarray = None  # current position of the robot
         self.robot_v: float = 0  # not tracked in the base simulator
         self.robot_w: float = 0  # not tracked in the base simulator
-        super().__init__("BRNE")  # parent class needs to know the algorithm
+        super().__init__("DBE")  # parent class needs to know the algorithm
 
         print("use system dynamics: ", self.joystick_params.use_system_dynamics)
         assert not self.joystick_params.use_system_dynamics
@@ -222,7 +222,7 @@ class JoystickBRNE(JoystickBase):
         train_ts = np.array([tlist[0]])
         train_noise = np.array([1e-02])
         test_ts = tlist
-        self.cov_Lmat, cov_mat = brne.get_Lmat_nb(
+        self.cov_Lmat, cov_mat = dbe.get_Lmat_nb(
             train_ts, test_ts, train_noise)
         # print('cov diag: ', np.diagonal(cov_mat)[:10], end='  ')
 
@@ -235,10 +235,10 @@ class JoystickBRNE(JoystickBase):
             list(self.agents.keys())[_i]
             for _i in np.argsort(agent_dist_list)[: self.num_peds]
         ]
-        num_brne_agents = len(ped_keys) + 1
+        num_dbe_agents = len(ped_keys) + 1
 
-        xmean_list = np.zeros((num_brne_agents, tsteps))
-        ymean_list = np.zeros((num_brne_agents, tsteps))
+        xmean_list = np.zeros((num_dbe_agents, tsteps))
+        ymean_list = np.zeros((num_dbe_agents, tsteps))
         xmean_list[0] = x_list.copy()
         ymean_list[0] = y_list.copy()
         for i, key in enumerate(ped_keys):
@@ -255,18 +255,18 @@ class JoystickBRNE(JoystickBase):
         if meta_flag == False:
             # if True:
             # if np.min(agent_dist_list) < 1.0:
-            x_pts = brne.mvn_sample_normal(
-                num_brne_agents * self.num_pts, tsteps, self.cov_Lmat
+            x_pts = dbe.mvn_sample_normal(
+                num_dbe_agents * self.num_pts, tsteps, self.cov_Lmat
             )
-            y_pts = brne.mvn_sample_normal(
-                num_brne_agents * self.num_pts, tsteps, self.cov_Lmat
+            y_pts = dbe.mvn_sample_normal(
+                num_dbe_agents * self.num_pts, tsteps, self.cov_Lmat
             )
-            x_opt_trajs, y_opt_trajs, weights = brne.brne_nav(
+            x_opt_trajs, y_opt_trajs, weights = dbe.dbe_nav(
                 xmean_list,
                 ymean_list,
                 x_pts,
                 y_pts,
-                num_brne_agents,
+                num_dbe_agents,
                 tsteps,
                 self.num_pts,
             )
