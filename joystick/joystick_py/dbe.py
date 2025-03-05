@@ -143,6 +143,7 @@ def dbe_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
     all_costs = costs_nb(all_traj_pts_x, all_traj_pts_y,
                          num_agents, num_pts, tsteps)
 
+    # DIO KOJI SE ODNOSI NA BRNE
     for iter_num in range(10):
         weights = weights_update_nb(
             all_costs, weights, index_table, all_pt_index, num_agents, num_pts
@@ -158,6 +159,7 @@ def dbe_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
             weights[i][:, np.newaxis],
             axis=0,
         )
+    # KRAJ
 
     return x_opt_trajs, y_opt_trajs, weights
 
