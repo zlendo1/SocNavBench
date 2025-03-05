@@ -1,4 +1,4 @@
-########################################################## FUNCTIONS
+# FUNCTIONS
 import numba as nb
 import numpy as np
 
@@ -71,7 +71,8 @@ def costs_nb(trajs_x, trajs_y, num_agents, num_pts, tsteps):
             traj_yj = trajs_y[j]
             traj_costs = np.zeros(tsteps)
             for t in nb.prange(tsteps):
-                dist = (traj_xi[t] - traj_xj[t]) ** 2 + (traj_yi[t] - traj_yj[t]) ** 2
+                dist = (traj_xi[t] - traj_xj[t]) ** 2 + \
+                    (traj_yi[t] - traj_yj[t]) ** 2
                 traj_costs[t] = 2 - 2 / (1.0 + np.exp(-10.0 * dist))
             vals[i, j] = np.max(traj_costs) * 100.0
     return vals
@@ -125,21 +126,22 @@ def brne_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
     all_traj_pts_y = np.zeros((num_agents * num_pts, tsteps))
 
     i = 0
-    all_traj_pts_x[i * num_pts : i * num_pts + num_pts] = (
-        xmean_list[i] + x_pts[i * num_pts : i * num_pts + num_pts]
+    all_traj_pts_x[i * num_pts: i * num_pts + num_pts] = (
+        xmean_list[i] + x_pts[i * num_pts: i * num_pts + num_pts]
     )
-    all_traj_pts_y[i * num_pts : i * num_pts + num_pts] = (
-        ymean_list[i] + y_pts[i * num_pts : i * num_pts + num_pts]
+    all_traj_pts_y[i * num_pts: i * num_pts + num_pts] = (
+        ymean_list[i] + y_pts[i * num_pts: i * num_pts + num_pts]
     )
 
     for i in range(1, num_agents):
-        all_traj_pts_x[i * num_pts : i * num_pts + num_pts] = (
-            xmean_list[i] + x_pts[i * num_pts : i * num_pts + num_pts]
+        all_traj_pts_x[i * num_pts: i * num_pts + num_pts] = (
+            xmean_list[i] + x_pts[i * num_pts: i * num_pts + num_pts]
         )
-        all_traj_pts_y[i * num_pts : i * num_pts + num_pts] = (
-            ymean_list[i] + y_pts[i * num_pts : i * num_pts + num_pts]
+        all_traj_pts_y[i * num_pts: i * num_pts + num_pts] = (
+            ymean_list[i] + y_pts[i * num_pts: i * num_pts + num_pts]
         )
-    all_costs = costs_nb(all_traj_pts_x, all_traj_pts_y, num_agents, num_pts, tsteps)
+    all_costs = costs_nb(all_traj_pts_x, all_traj_pts_y,
+                         num_agents, num_pts, tsteps)
 
     for iter_num in range(10):
         weights = weights_update_nb(
@@ -147,11 +149,13 @@ def brne_nav(xmean_list, ymean_list, x_pts, y_pts, num_agents, tsteps, num_pts):
         )
     for i in range(num_agents):
         x_opt_trajs[i] = xmean_list[i] + np.mean(
-            x_pts[i * num_pts : i * num_pts + num_pts] * weights[i][:, np.newaxis],
+            x_pts[i * num_pts: i * num_pts + num_pts] *
+            weights[i][:, np.newaxis],
             axis=0,
         )
         y_opt_trajs[i] = ymean_list[i] + np.mean(
-            y_pts[i * num_pts : i * num_pts + num_pts] * weights[i][:, np.newaxis],
+            y_pts[i * num_pts: i * num_pts + num_pts] *
+            weights[i][:, np.newaxis],
             axis=0,
         )
 

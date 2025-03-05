@@ -57,8 +57,10 @@ class JoystickBRNE(JoystickBase):
     def init_control_pipeline(self) -> None:
         # NOTE: this is like an init() run *after* obtaining episode metadata
         # robot start and goal to satisfy the old Agent.planner
-        self.start_config: SystemConfig = SystemConfig.from_pos3(self.get_robot_start())
-        self.goal_config: SystemConfig = SystemConfig.from_pos3(self.get_robot_goal())
+        self.start_config: SystemConfig = SystemConfig.from_pos3(
+            self.get_robot_start())
+        self.goal_config: SystemConfig = SystemConfig.from_pos3(
+            self.get_robot_goal())
         # rest of the 'Agent' params used for the joystick planner
         self.agent_params: DotMap = create_agent_params(
             with_planner=True, with_obstacle_map=True
@@ -71,7 +73,8 @@ class JoystickBRNE(JoystickBase):
         self.obj_fn: ObjectiveFunction = Agent._init_obj_fn(
             self, params=self.agent_params
         )
-        psc_obj = PersonalSpaceCost(params=self.agent_params.personal_space_objective)
+        psc_obj = PersonalSpaceCost(
+            params=self.agent_params.personal_space_objective)
         self.obj_fn.add_objective(psc_obj)
 
         # Initialize Fast-Marching-Method map for agent's pathfinding
@@ -124,7 +127,8 @@ class JoystickBRNE(JoystickBase):
         )
 
         # Updating robot speeds (linear and angular) based off simulator data
-        self.robot_v = euclidean_dist2(self.robot_current, robot_prev) / self.sim_dt
+        self.robot_v = euclidean_dist2(
+            self.robot_current, robot_prev) / self.sim_dt
         self.robot_w = (self.robot_current[2] - robot_prev[2]) / self.sim_dt
 
         #################################
@@ -218,7 +222,8 @@ class JoystickBRNE(JoystickBase):
         train_ts = np.array([tlist[0]])
         train_noise = np.array([1e-02])
         test_ts = tlist
-        self.cov_Lmat, cov_mat = brne.get_Lmat_nb(train_ts, test_ts, train_noise)
+        self.cov_Lmat, cov_mat = brne.get_Lmat_nb(
+            train_ts, test_ts, train_noise)
         # print('cov diag: ', np.diagonal(cov_mat)[:10], end='  ')
 
         agent_dist_list = np.zeros(len(self.agents))
@@ -277,7 +282,8 @@ class JoystickBRNE(JoystickBase):
             (y_list[1:] - y_list[:-1]) ** 2 + (x_list[1:] - x_list[:-1]) ** 2
         )
         v_list = np.array([v, *v_list])
-        th_list = np.arctan2(y_list[1:] - y_list[:-1], x_list[1:] - x_list[:-1])
+        th_list = np.arctan2(y_list[1:] - y_list[:-1],
+                             x_list[1:] - x_list[:-1])
         th_list = np.array([th, *th_list])
 
         self.x_list = x_list.copy()
